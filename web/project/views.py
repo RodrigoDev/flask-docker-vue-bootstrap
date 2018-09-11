@@ -1,5 +1,5 @@
 from project import app, lm
-from flask import request, redirect, render_template, url_for, flash, abort
+from flask import request, redirect, render_template, url_for, flash, abort, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from .forms import LoginForm, TodoForm
 from .user import User
@@ -9,6 +9,11 @@ from bson.objectid import ObjectId
 @app.route('/')
 def home():
     return render_template('home.html')
+
+# sanity check route
+@app.route('/ping', methods=['GET'])
+def ping_pong():
+    return jsonify('pong!')
 
 
 @app.route('/login', methods=['GET', 'POST'])
