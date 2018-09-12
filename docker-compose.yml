@@ -1,9 +1,9 @@
 version: '2'
 
 services:
-  web:
+  api:
     restart: always
-    build: ./web
+    build: ./api
     expose:
       - "8000"
     volumes:
@@ -20,9 +20,18 @@ services:
     volumes:
       - /www/static
     volumes_from:
-      - web
+      - api
+      - frontend
     depends_on:
-      - web
+      - api
+      - frontend
+
+  frontend:
+    build: ./frontend
+    environment:
+      - NODE_ENV=dev
+    ports:
+      - "8080:8080"
 
   mongodb:
     restart: always

@@ -5,6 +5,32 @@ from .forms import LoginForm, TodoForm
 from .user import User
 from bson.objectid import ObjectId
 
+import uuid
+
+db = app.config['DATABASE']
+
+BOOKS = [
+    {
+        'id': uuid.uuid4().hex,
+        'title': 'On the Road',
+        'author': 'Jack Kerouac',
+        'read': True
+    },
+    {
+        'id': uuid.uuid4().hex,
+        'title': 'Harry Potter and the Philosopher\'s Stone',
+        'author': 'J. K. Rowling',
+        'read': False
+    },
+    {
+        'id': uuid.uuid4().hex,
+        'title': 'Green Eggs and Ham',
+        'author': 'Dr. Seuss',
+        'read': True
+    }
+]
+
+
 
 @app.route('/')
 def home():
@@ -20,7 +46,7 @@ def ping_pong():
 def login():
     form = LoginForm()
     if request.method == 'POST' and form.validate_on_submit():
-        user = app.config['USERS_COLLECTION'].find_one({"_id": form.username.data})
+        user = db.users.find_one({"_id": form.username.data})
         if user and User.validate_login(user['password'], form.password.data):
             user_obj = User(user['_id'])
             login_user(user_obj)
@@ -42,7 +68,7 @@ def todo():
     form = TodoForm()
     items = []
     if current_user.is_authenticated:
-        _items = app.config['TODO_COLLECTION'].find(
+        _items = db.todos.find(
             {"user": current_user.username}
         )
         items = [item for item in _items]
@@ -60,7 +86,7 @@ def new():
             'name': request.form['name'],
             'description': request.form['description']
         }
-        result = app.config['TODO_COLLECTION'].insert_one(item)
+        result = db.todos.insert_one(item)
         if result.inserted_id:
             flash("Todo created successfully!", category='success')
         else:
@@ -72,7 +98,7 @@ def new():
 @login_required
 def edit(_id):
     if current_user.is_authenticated:
-        todo = app.config['TODO_COLLECTION'].find_one({
+        todo = db.todos.find_one({
             '_id': ObjectId(_id),
             'user': current_user.username
         })
@@ -94,7 +120,7 @@ def edit(_id):
 def update():
     form = TodoForm()
     if request.method == 'POST' and form.validate_on_submit():
-        todo = app.config['TODO_COLLECTION'].find_one({
+        todo = db.todos.find_one({
             '_id': ObjectId(form.object_id.data),
             'user': current_user.username
         })
@@ -103,7 +129,7 @@ def update():
             todo['name'] = form.name.data
             todo['description'] = form.description.data
 
-            result = app.config['TODO_COLLECTION'].update(
+            result = db.todos.update(
                 {
                     '_id': ObjectId(form.object_id.data)
                 },
@@ -122,7 +148,7 @@ def update():
 @app.route('/delete/<_id>', methods=['Get'])
 @login_required
 def delete_todo(_id):
-    deleted = app.config['TODO_COLLECTION'].remove({
+    deleted = db.todos.remove({
         '_id': ObjectId(_id),
         'user': current_user.username
     });
@@ -133,9 +159,52 @@ def delete_todo(_id):
     return redirect(url_for('todo'))
 
 
+@app.route('/books', methods=['GET', 'POST'])
+def all_books():
+    response_object = {'status': 'success'}
+    if request.method == 'POST':
+        post_data = request.get_json()
+        BOOKS.append({
+            'id': uuid.uuid4().hex,
+            'title': post_data.get('title'),
+            'author': post_data.get('author'),
+            'read': post_data.get('read')
+        })
+        response_object['message'] = 'Book added!'
+    else:
+        response_object['books'] = BOOKS
+    return jsonify(response_object)
+
+@app.route('/books/<book_id>', methods=['PUT', 'DELETE'])
+def single_book(book_id):
+    response_object = {'status': 'success'}
+    if request.method == 'PUT':
+        post_data = request.get_json()
+        remove_book(book_id)
+        BOOKS.append({
+            'id': uuid.uuid4().hex,
+            'title': post_data.get('title'),
+            'author': post_data.get('author'),
+            'read': post_data.get('read')
+        })
+        response_object['message'] = 'Book updated!'
+    if request.method == 'DELETE':
+        remove_book(book_id)
+        response_object['message'] = 'Book removed!'
+    return jsonify(response_object)
+
+
+def remove_book(book_id):
+    for book in BOOKS:
+        if book['id'] == book_id:
+            BOOKS.remove(book)
+            return True
+    return False
+
+
 @lm.user_loader
 def load_user(username):
-    u = app.config['USERS_COLLECTION'].find_one({"_id": username})
+    u = db.users.find_one({"_id": username})
     if not u:
         return None
     return User(u['_id'])

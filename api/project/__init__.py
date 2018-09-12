@@ -4,7 +4,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
 
 app = Flask(__name__)
-csrf = CSRFProtect(app)
+#csrf = CSRFProtect(app)
 CORS(app)
 app.config.from_object('config')
 lm = LoginManager()
