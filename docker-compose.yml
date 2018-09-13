@@ -8,7 +8,7 @@ services:
       - "8000"
     volumes:
       - /usr/src/app/project/static
-    command: /usr/local/bin/gunicorn -w 2 -b :8000 project:app
+    command: /usr/local/bin/gunicorn -w 2 -b :8000 run:app
     depends_on:
       - mongodb
 
@@ -17,6 +17,7 @@ services:
     build: ./nginx
     ports:
       - "80:80"
+      - "8000:8000"
     volumes:
       - /www/static
     volumes_from:
