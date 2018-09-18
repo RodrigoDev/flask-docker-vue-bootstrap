@@ -1,7 +1,5 @@
-from flask_restplus import Api
-
+from flask_restplus import Api, Resource
 from .books import api as books
-#from .health_check import api as health_check
 
 api = Api(
     title='Book API',
@@ -9,5 +7,9 @@ api = Api(
     description='A simple book demo API',
 )
 
+@api.route('/ping')
+class HealthCheck(Resource):
+    def get(self):
+        return {'message': 'pong!'}
+
 api.add_namespace(books)
-#api.add_namespace(health_check)

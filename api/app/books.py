@@ -1,35 +1,21 @@
 from flask_restplus import Namespace, Resource, fields
-import uuid
+from config import DATABASE as db
+from bson.objectid import ObjectId
+
+import json
 
 api = Namespace('books', description='Books operations')
 
+class Stringfy():
+    def apply(value):
+        return str(value)
+
 book = api.model('Book', {
-    'id': fields.Integer(readonly=True, description='The book unique identifier'),
+    '_id': fields.Raw(readonly=True, mask=Stringfy, description='The book unique identifier'),
     'title': fields.String(required=True, description='The book title'),
     'author': fields.String(required=True, description='The book author name'),
     'read': fields.Boolean(required=False, description='Already read the book'),
 })
-
-BOOKS = [
-    {
-        'id': uuid.uuid4().hex,
-        'title': 'On the Road',
-        'author': 'Jack Kerouac',
-        'read': True
-    },
-    {
-        'id': uuid.uuid4().hex,
-        'title': 'Harry Potter and the Philosopher\'s Stone',
-        'author': 'J. K. Rowling',
-        'read': False
-    },
-    {
-        'id': uuid.uuid4().hex,
-        'title': 'Green Eggs and Ham',
-        'author': 'Dr. Seuss',
-        'read': True
-    }
-]
 
 @api.route('/')
 class BookList(Resource):
@@ -37,10 +23,16 @@ class BookList(Resource):
     @api.marshal_list_with(book)
     def get(self):
         '''List all books'''
-        return BOOKS
+        return [book for book in db.book.find({})]
 
+    @api.doc('create_book')
+    @api.expect(book)
+    @api.marshal_with(book, code=201)
+    def post(self):
+        '''Create a new book'''
+        return db.book.insert_one(api.payload), 201
 
-@api.route('/<int:id>')
+@api.route('/<id>')
 @api.response(404, 'Book not found')
 @api.param('id', 'The task identifier')
 class Book(Resource):
@@ -49,17 +41,26 @@ class Book(Resource):
     @api.marshal_with(book)
     def get(self, id):
         '''Fetch a given resource'''
-        return DAO.get(id)
+        return db.book.find_one({
+            '_id': ObjectId(id),
+        })
 
     @api.doc('delete_book')
     @api.response(204, 'Book deleted')
     def delete(self, id):
         '''Delete a task given its identifier'''
-        DAO.delete(id)
+        db.book.remove({
+            '_id': ObjectId(id)
+        });
         return '', 204
 
     @api.expect(book)
     @api.marshal_with(book)
     def put(self, id):
         '''Update a task given its identifier'''
-        return DAO.update(id, api.payload)
+        return db.book.update(
+            {
+                '_id': ObjectId(id)
+            },
+            api.payload
+        )
