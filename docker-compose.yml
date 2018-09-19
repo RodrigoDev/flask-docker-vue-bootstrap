@@ -4,8 +4,6 @@ services:
   api:
     restart: always
     build: ./api
-    expose:
-      - "8000"
     volumes:
       - /usr/src/app/project/static
     command: /usr/local/bin/gunicorn -w 2 -b :8000 run:app
@@ -37,3 +35,5 @@ services:
   mongodb:
     restart: always
     build: ./mongodb
+    ports:
+      - "27017:27017"

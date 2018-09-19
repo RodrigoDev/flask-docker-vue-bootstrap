@@ -130,7 +130,7 @@ export default {
         read: [],
       },
       editForm: {
-        id: '',
+        _id: '',
         title: '',
         author: '',
         read: [],
@@ -144,10 +144,14 @@ export default {
   },
   methods: {
     getBooks() {
-      const path = 'http://api:8000/books';
+      const path = 'http://0.0.0.0:8000/books';
       axios.get(path)
         .then((res) => {
-          this.books = res.data.books;
+          this.books = res.data;
+          // eslint-disable-next-line
+          console.log(this.books);
+          // eslint-disable-next-line
+          console.log(res.data);
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -155,7 +159,7 @@ export default {
         });
     },
     addBook(payload) {
-      const path = 'http://api:8000/books';
+      const path = 'http://0.0.0.0:8000/books';
       axios.post(path, payload)
         .then(() => {
           this.getBooks();
@@ -172,7 +176,7 @@ export default {
       this.addBookForm.title = '';
       this.addBookForm.author = '';
       this.addBookForm.read = [];
-      this.editForm.id = '';
+      this.editForm._id = '';
       this.editForm.title = '';
       this.editForm.author = '';
       this.editForm.read = [];
@@ -208,10 +212,10 @@ export default {
         author: this.editForm.author,
         read,
       };
-      this.updateBook(payload, this.editForm.id);
+      this.updateBook(payload, this.editForm._id);
     },
     updateBook(payload, bookID) {
-      const path = `http://api:8000/books/${bookID}`;
+      const path = `http://0.0.0.0:8000/books/${bookID}`;
       axios.put(path, payload)
         .then(() => {
           this.getBooks();
@@ -231,7 +235,7 @@ export default {
       this.getBooks(); // why?
     },
     removeBook(bookID) {
-      const path = `http://api:8000/books/${bookID}`;
+      const path = `http://0.0.0.0:8000/books/${bookID}`;
       axios.delete(path)
         .then(() => {
           this.getBooks();
@@ -245,7 +249,7 @@ export default {
         });
     },
     onDeleteBook(book) {
-      this.removeBook(book.id);
+      this.removeBook(book._id);
     },
 
   },
