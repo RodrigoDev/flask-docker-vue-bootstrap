@@ -1,4 +1,4 @@
-version: '2'
+version: '3.3'
 
 services:
   api:
@@ -20,9 +20,6 @@ services:
       - "8000:8000"
     volumes:
       - /www/static
-    volumes_from:
-      - api
-      - frontend
     depends_on:
       - api
       - frontend
