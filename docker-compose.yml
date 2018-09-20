@@ -6,7 +6,7 @@ services:
     build: ./api
     volumes:
       - /usr/src/app/project/static
-    command: /usr/local/bin/gunicorn -w 2 -b :8000 run:app
+    command: /usr/local/bin/gunicorn -w 2 -b :5000 run:app
     depends_on:
       - mongodb
     environment:
@@ -17,7 +17,7 @@ services:
     build: ./nginx
     ports:
       - "80:80"
-      - "8000:8000"
+      - "5000:5000"
     volumes:
       - /www/static
     depends_on:
