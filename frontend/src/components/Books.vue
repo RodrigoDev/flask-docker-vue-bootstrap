@@ -130,6 +130,7 @@ export default {
         read: [],
       },
       editForm: {
+        // eslint-disable-next-line
         _id: '',
         title: '',
         author: '',
@@ -176,6 +177,7 @@ export default {
       this.addBookForm.title = '';
       this.addBookForm.author = '';
       this.addBookForm.read = [];
+      // eslint-disable-next-line
       this.editForm._id = '';
       this.editForm.title = '';
       this.editForm.author = '';
@@ -212,6 +214,7 @@ export default {
         author: this.editForm.author,
         read,
       };
+      // eslint-disable-next-line
       this.updateBook(payload, this.editForm._id);
     },
     updateBook(payload, bookID) {
@@ -249,6 +252,7 @@ export default {
         });
     },
     onDeleteBook(book) {
+      // eslint-disable-next-line
       this.removeBook(book._id);
     },
 

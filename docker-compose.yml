@@ -9,6 +9,8 @@ services:
     command: /usr/local/bin/gunicorn -w 2 -b :8000 run:app
     depends_on:
       - mongodb
+    environment:
+      - FLASK_ENV=$ENV
 
   nginx:
     restart: always
@@ -28,9 +30,7 @@ services:
   frontend:
     build: ./frontend
     environment:
-      - NODE_ENV=dev
-    ports:
-      - "8080:8080"
+      - NODE_ENV=$ENV
 
   mongodb:
     restart: always
