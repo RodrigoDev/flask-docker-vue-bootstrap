@@ -10,7 +10,6 @@ SECRET_KEY = 'put_your_secret_key_here'
 
 DB_NAME = 'tada'
 
-#DATABASE = MongoClient("mongodb://localhost:27017")[DB_NAME]
 DATABASE = MongoClient(mongo_uri)[DB_NAME]
 
 DEBUG = True
