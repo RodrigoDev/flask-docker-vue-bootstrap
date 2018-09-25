@@ -1,15 +1,13 @@
+from flask import Blueprint
 from flask_restplus import Api, Resource
-from .books import api as books
+from .books import api as books_api
 
-api = Api(
-    title='Book API',
+blueprint = Blueprint('api', __name__, url_prefix='/api')
+api = Api(blueprint,
+    title='Books Api',
     version='1.0',
-    description='A simple book demo API',
+    description='A simple book Api',
+    # All API metadatas
 )
 
-@api.route('/ping')
-class HealthCheck(Resource):
-    def get(self):
-        return {'message': 'pong!'}
-
-api.add_namespace(books)
+api.add_namespace(books_api)

@@ -123,6 +123,7 @@ import Alert from './Alert';
 export default {
   data() {
     return {
+      rootApi: 'http://localhost:5000/api',
       books: [],
       addBookForm: {
         title: '',
@@ -145,7 +146,7 @@ export default {
   },
   methods: {
     getBooks() {
-      const path = 'http://0.0.0.0:5000/books';
+      const path = `${this.rootApi}/books`;
       axios.get(path)
         .then((res) => {
           this.books = res.data;
@@ -160,7 +161,7 @@ export default {
         });
     },
     addBook(payload) {
-      const path = 'http://0.0.0.0:5000/books';
+      const path = `${this.rootApi}/books`;
       axios.post(path, payload)
         .then(() => {
           this.getBooks();
@@ -218,7 +219,7 @@ export default {
       this.updateBook(payload, this.editForm._id);
     },
     updateBook(payload, bookID) {
-      const path = `http://0.0.0.0:5000/books/${bookID}`;
+      const path = `${this.rootApi}/books/${bookID}`;
       axios.put(path, payload)
         .then(() => {
           this.getBooks();
@@ -238,7 +239,7 @@ export default {
       this.getBooks(); // why?
     },
     removeBook(bookID) {
-      const path = `http://0.0.0.0:5000/books/${bookID}`;
+      const path = `${this.rootApi}/books/${bookID}`;
       axios.delete(path)
         .then(() => {
           this.getBooks();
