@@ -6,7 +6,7 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
+    rootApi: '"http://localhost:5000/api"',
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
