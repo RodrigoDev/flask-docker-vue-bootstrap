@@ -10,7 +10,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      - FLASK_ENV=$ENV
+      - FLASK_ENV=${APP_ENV}
 
   nginx:
     restart: always
@@ -27,7 +27,7 @@ services:
   frontend:
     build: ./frontend
     environment:
-      - NODE_ENV=$ENV
+      - NODE_ENV=${APP_ENV}
 
   mongodb:
     restart: always
