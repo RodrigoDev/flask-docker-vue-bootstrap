@@ -1,6 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
-from config import DATABASE as db
 from bson.objectid import ObjectId
+from services import BookService, UserService
 
 import json
 
