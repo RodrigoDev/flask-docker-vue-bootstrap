@@ -7,7 +7,7 @@ import json
 api = Namespace('books', description='Books operations')
 
 class Stringfy():
-    def apply(value):
+    def apply(self, value):
         return str(value)
 
 book = api.model('Book', {
@@ -51,7 +51,7 @@ class Book(Resource):
         '''Delete a task given its identifier'''
         db.book.remove({
             '_id': ObjectId(id)
-        });
+        })
         return '', 204
 
     @api.expect(book)
