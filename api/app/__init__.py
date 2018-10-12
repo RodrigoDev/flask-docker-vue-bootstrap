@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask_restplus import Api, Resource
-from .books import api as books_api
+from .views.books import api as books_api
+
 
 blueprint = Blueprint('api', __name__, url_prefix='/api')
 api = Api(blueprint,
