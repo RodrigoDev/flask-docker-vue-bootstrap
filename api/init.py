@@ -3,9 +3,8 @@
 from werkzeug.security import generate_password_hash
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
-from project import app
+from run import db
 
-db = app.config['DATABASE']
 
 def main():
     pass_hash = generate_password_hash("tada123", method='pbkdf2:sha256')
